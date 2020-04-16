@@ -1,0 +1,12 @@
+actor: ApiTester
+modules:
+    enabled:
+        - \Helper\Api
+        - Rest:
+            url: http://localhost:8000/api
+            depends: PhpBrowser
+            connection_timeout: 10000
+            request_timeout: 10000
+            part: Json
+            xdebug_remote: true
+        - Asserts

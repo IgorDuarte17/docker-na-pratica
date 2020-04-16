@@ -1,0 +1,52 @@
+version: '3.7'
+services:
+  #PHP Service
+  api:
+    container_name: api
+    build: ./php
+    image: php
+    working_dir: /var/www/html
+    volumes:
+      - ./../api:/var/www/html
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - api-network
+
+  #Nginx Service
+  nginx:
+    container_name: nginx
+    image: nginx:1.17.3
+    ports:
+      - "8080:80"
+    volumes:
+      - ./../api:/var/www/html
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - api-network
+
+  #MySQL Service
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: aplication
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - api-network
+
+#Docker Networks
+networks:
+  api-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local
